@@ -1,14 +1,29 @@
-package ua.klieshchunov;
+package ua.klieshchunov.taskOne;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import ua.klieshchunov.entity.LawViolation;
-import ua.klieshchunov.entity.LawViolationsWrapper;
+import ua.klieshchunov.taskOne.entity.LawViolation;
+import ua.klieshchunov.taskOne.entity.LawViolationsWrapper;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.IOException;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -17,7 +32,7 @@ public class ParsingUtils {
         ObjectMapper mapper = new ObjectMapper();
         XmlMapper xmlMapper = new XmlMapper();
         File[] lawViolationFiles = getArrayOfFiles(directoryPath);
-        final Executor executor = Executors.newFixedThreadPool(15);
+        final ExecutorService executor = Executors.newFixedThreadPool(15);
 
         List<CompletableFuture<Map<String, Double>>> futures = getFutureStatistics(mapper, lawViolationFiles, executor);
         joinAllFutures(futures);
@@ -39,7 +54,6 @@ public class ParsingUtils {
         return Arrays.stream(lawViolationFiles)
                 .map(file -> CompletableFuture.supplyAsync(
                         () -> {
-                            DelayUtils.delay(50);
                             List<LawViolation> lawViolations = readObjectFromFileToList(mapper, file);
                             return createStatistics(lawViolations);
                         }, executor))

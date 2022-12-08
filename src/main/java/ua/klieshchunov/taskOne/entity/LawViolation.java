@@ -1,4 +1,4 @@
-package ua.klieshchunov.entity;
+package ua.klieshchunov.taskOne.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

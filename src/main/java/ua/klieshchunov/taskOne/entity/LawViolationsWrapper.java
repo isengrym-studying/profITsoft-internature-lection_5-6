@@ -1,4 +1,4 @@
-package ua.klieshchunov.entity;
+package ua.klieshchunov.taskOne.entity;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Getter;
