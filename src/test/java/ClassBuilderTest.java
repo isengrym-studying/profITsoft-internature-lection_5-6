@@ -6,25 +6,21 @@ import ua.klieshchunov.taskTwo.exceptions.*;
 
 import java.nio.file.Path;
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoField;
 
 public class ClassBuilderTest {
     public static final String propertiesPath = "src/main/resources/class.properties";
 
     @Test
     public void loadFromProperties_shouldReturnProperInstance(){
-        DateTimeFormatter time = new DateTimeFormatterBuilder()
-                .appendPattern("dd-MM-yyyy")
-                .parseDefaulting(ChronoField.NANO_OF_DAY, 0)
-                .toFormatter()
-                .withZone(ZoneId.of("Europe/Kiev"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        Instant timeFormatted = LocalDate.parse("12-05-2017", formatter).atStartOfDay(ZoneOffset.UTC).toInstant();
 
         ProperTestEntity actual = ClassBuilder.loadFromProperties(ProperTestEntity.class, Path.of(propertiesPath));
-        ProperTestEntity expected = new ProperTestEntity("someString", 7, time.parse("12-05-2017", Instant::from));
+        ProperTestEntity expected = new ProperTestEntity("someString", 7, timeFormatted);
         Assertions.assertEquals(actual, expected);
     }
 
