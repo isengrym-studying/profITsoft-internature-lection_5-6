@@ -8,14 +8,12 @@ import java.nio.file.Paths;
 
 public class ParsingUtilsTest {
 
+    public final String inputPath = "src/main/resources/lawViolations";
+    public final String outputPath = "src/main/resources/lawViolations/statistics.xml";
+
     @Test
     public void testGenerateLawViolationsStatistic() throws IOException {
-        String inputPath = "src/main/resources/lawViolations";
-        String outputPath = "src/main/resources/lawViolations/statistics.xml";
-
-        for(int i = 0; i <= 500; i++) {
-            ParsingUtils.generateLawViolationStatistics(inputPath, outputPath);
-        }
+        ParsingUtils.generateLawViolationStatistics(inputPath, outputPath);
 
         String actual = Files.readString(Paths.get(outputPath));
         String expected = """
@@ -36,6 +34,38 @@ public class ParsingUtilsTest {
         expected = expected.replaceAll("\n", "\r\n");
 
         Assertions.assertEquals(expected, actual);
-
     }
+
+    @Test
+    public void testMethodPerformance_generateLawViolationsStatistic() {
+        int numberOfExperiments = 5;
+        float[] results = new float[numberOfExperiments];
+
+        for (int j = 0; j < numberOfExperiments; j++) {
+            long start = System.nanoTime();
+
+            for (int i = 0; i <= 500; i++)
+                ParsingUtils.generateLawViolationStatistics(inputPath, outputPath);
+
+            results[j] = toSeconds(System.nanoTime() - start);
+        }
+
+
+        System.out.println(String.format("Average time: %s s",average(results)));
+    }
+
+    private float toSeconds(long nano) {
+        return nano/1000000000F;
+    }
+
+    private float average(float[] array) {
+        int i = 0;
+        float sum = 0;
+        while (i < array.length) {
+            sum += array[i];
+            i++;
+        }
+        return sum/array.length;
+    }
+
 }
