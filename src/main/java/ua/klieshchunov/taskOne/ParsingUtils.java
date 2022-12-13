@@ -19,11 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -32,7 +28,7 @@ public class ParsingUtils {
         ObjectMapper mapper = new ObjectMapper();
         XmlMapper xmlMapper = new XmlMapper();
         File[] lawViolationFiles = getArrayOfFiles(directoryPath);
-        final ExecutorService executor = Executors.newFixedThreadPool(15);
+        final ExecutorService executor = new ForkJoinPool(15);
 
         List<CompletableFuture<Map<String, Double>>> futures = getFutureStatistics(mapper, lawViolationFiles, executor);
         joinAllFutures(futures);
